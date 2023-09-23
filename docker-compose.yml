@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: ui
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "8501:8501"
+    command: ["streamlit", "run", "ui.py"]

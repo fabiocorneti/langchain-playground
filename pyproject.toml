@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "langchain-playground"
+version = "0.1.0"
+description = "LangChain playground"
+authors = ["Fabio Corneti <info@corneti.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+elasticsearch = {extras = ["async"], version = "^8.10.0"}
+fastapi = "0.103.1"
+langchain = "0.0.285"
+pydantic = "2.3.0"
+pydantic-yaml = "1.1.1"
+sentence-transformers = "2.2.2"
+uvicorn = "0.23.2"
+pypdf = "3.15.5"
+streamlit = "1.26.0"
+tiktoken = "^0.5.1"
+openai = "0.28.0"
+pymupdf = "1.23.3"
+pillow = "9.5.0"
+spacy = "^3.6.1"
+unstructured = "^0.10.16"
+pdf2image = "^1.16.3"
+pdfminer = "^20191125"
+pdfminer-six = "^20221105"
+instructorembedding = "^1.0.1"
+wikipedia = "^1.4.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.17.5"
+flake8 = "^6.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

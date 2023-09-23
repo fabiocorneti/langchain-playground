@@ -1,0 +1,12 @@
+elasticsearch:
+  url: https://elastic:443
+  username: elastic
+  password: password
+  index: langchain
+sentencetransformers:
+  device: "cpu"
+instructor:
+  device: "cpu"
+#openai:
+#  apikey: 
+#llm: openai
