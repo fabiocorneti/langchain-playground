@@ -47,8 +47,7 @@ def index_documents(store: ElasticsearchDataStore) -> None:
     indexer_splitter = settings.CONFIGURATION.indexer.splitter
 
     if indexer_splitter == Splitter.SPACY:
-        splitter = SpacyLimitTextSplitter(token_limit=settings.CONFIGURATION.indexer.maxTokens,
-                                          **chunk_kwargs)
+        splitter = SpacyLimitTextSplitter(settings.CONFIGURATION.indexer.maxTokens)
     elif embeddings_generation_mode == EmbeddingsGenerationMode.OPENAI:
         chunk_kwargs["encoding_name"] = "cl100k_base"
         splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(**chunk_kwargs)
