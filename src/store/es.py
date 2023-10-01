@@ -54,11 +54,13 @@ class ElasticsearchDataStore:
             hosts=[settings.CONFIGURATION.elasticsearch.url],
             basic_auth=(settings.CONFIGURATION.elasticsearch.username,
                         settings.CONFIGURATION.elasticsearch.password),
+            request_timeout=settings.CONFIGURATION.elasticsearch.requestTimeout,
         )
 
         embeddings_mode = settings.CONFIGURATION.embeddingsGenerationMode
         normalize = settings.CONFIGURATION.elasticsearch.similarity == \
             DistanceStrategy.DOT_PRODUCT
+        retrieval_strategy = ElasticsearchStore.ApproxRetrievalStrategy(hybrid=False)
         if embeddings_mode == EmbeddingsGenerationMode.SENTENCETRANSFORMERS:
             embeddings = HuggingFaceEmbeddings(
                 model_name=settings.CONFIGURATION.sentencetransformers.embeddingsModel.value,
@@ -76,20 +78,23 @@ class ElasticsearchDataStore:
                 model=settings.CONFIGURATION.openai.embeddingsModel.value,
                 openai_api_key=settings.CONFIGURATION.openai.apikey
             )
+        elif embeddings_mode == EmbeddingsGenerationMode.ELSER:
+            embeddings = None
+            retrieval_strategy = ElasticsearchStore.SparseVectorRetrievalStrategy()
         else:
             raise NotImplementedError
-
+        
         store_kwargs = {
-            "embedding": embeddings,
             "index_name": settings.CONFIGURATION.elasticsearch.index,
             "vector_query_field": "vector",
             "query_field": "text",
             "es_connection": self.__client,
             "distance_strategy": settings.CONFIGURATION.elasticsearch.similarity,
-            "strategy": ElasticsearchStore.ApproxRetrievalStrategy(
-                hybrid=False,
-            )
+            "strategy": retrieval_strategy,
         }
+        if embeddings is not None:
+            store_kwargs["embedding"] = embeddings
+
         self.__store = ElasticsearchStore(**store_kwargs)
 
     def clear(self) -> None:
@@ -103,8 +108,11 @@ class ElasticsearchDataStore:
         """
         Indexes chunks into the store.
         """
-        logging.info("Indexing chunks from %s", doc_name)
-        self.__store.add_documents(chunks)
+        logging.info("Indexing %d chunks from %s", len(chunks), doc_name)
+        bulk_size = settings.CONFIGURATION.elasticsearch.bulkSize
+        for i in range(0, len(chunks), bulk_size):
+            logging.info("Batch %d-%d", i, i + bulk_size)
+            self.__store.add_documents(chunks[i:i + bulk_size])
         logging.info("Indexed chunks from %s", doc_name)
 
     def extract_negations(self, query: str) -> (str, List[str]):

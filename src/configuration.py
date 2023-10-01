@@ -25,6 +25,8 @@ def get_logging_level(level: LogLevel) -> int:
     elif level == LogLevel.INFO:
         return logging.INFO
     raise NotImplementedError
+
+
 class EmbeddingsGenerationMode(Enum):
     """
     Embeddings generation mode.
@@ -32,6 +34,7 @@ class EmbeddingsGenerationMode(Enum):
     INSTRUCTOR = "instructor"
     SENTENCETRANSFORMERS = "sentencetransformers"
     OPENAI = "openai"
+    ELSER = "elser"
 
 
 class PytorchDevice(Enum):
@@ -119,6 +122,8 @@ class ElasticsearchConfiguration(BaseModel):
     index: str = "langchain"
     ignoreTlsVerification: bool = False
     similarity: DistanceStrategy = DistanceStrategy.COSINE
+    requestTimeout: float = 60
+    bulkSize: int = 100
 
 
 class OpenAIConfiguration(BaseModel):
