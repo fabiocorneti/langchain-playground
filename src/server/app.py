@@ -41,7 +41,7 @@ async def ask(question: Question) -> Answer:
             metadata=Metadata(
                 page=r[0].metadata.get("page", 0),
                 source=r[0].metadata["source"],
-                title=r[0].metadata["title"]
+                title=r[0].metadata.get("title", None)
             ),
             score=r[1]
         ) for r in results

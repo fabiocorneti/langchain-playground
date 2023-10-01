@@ -27,7 +27,7 @@ class Metadata(BaseModel):
     """
     page: int = Field(description="Page number")
     source: str = Field(description="Source")
-    title: str = Field(description="Title")
+    title: str | None = Field(description="Title")
 
 
 class Result(BaseModel):
