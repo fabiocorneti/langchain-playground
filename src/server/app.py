@@ -38,7 +38,11 @@ async def ask(question: Question) -> Answer:
     mapped_results = [
         Result(
             page_content=r[0].page_content,
-            metadata=Metadata(page=r[0].metadata.get("page", 0), source=r[0].metadata["source"]),
+            metadata=Metadata(
+                page=r[0].metadata.get("page", 0),
+                source=r[0].metadata["source"],
+                title=r[0].metadata["title"]
+            ),
             score=r[1]
         ) for r in results
     ]
