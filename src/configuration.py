@@ -132,7 +132,7 @@ class ElasticsearchConfiguration(BaseModel):
     ignoreTlsVerification: bool = False
     similarity: DistanceStrategy = DistanceStrategy.COSINE
     requestTimeout: float = 60
-    bulkSize: int = 100
+    bulkSize: int = 50
 
 
 class OpenAIConfiguration(BaseModel):
