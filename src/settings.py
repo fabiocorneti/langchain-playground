@@ -9,7 +9,7 @@ import sys
 import yaml
 from pydantic_yaml import parse_yaml_file_as
 
-from configuration import Configuration
+from configuration import Configuration, get_logging_level
 
 BASE_DIR: str = Path(os.path.abspath(os.path.dirname(__file__)))
 STATIC_DIR: str = BASE_DIR / "static"
@@ -25,7 +25,8 @@ except (yaml.YAMLError, IOError) as e:
     sys.stderr.write(f"Could not open configuration file at {config_path}. {e}\n")
     sys.exit(1)
 
-logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
+                    level=get_logging_level(CONFIGURATION.loglevel))
 
 __all__ = [
     "DOCS_DIR",

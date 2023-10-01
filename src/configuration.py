@@ -1,12 +1,30 @@
 """
 Configuration classes
 """
+import logging
 from enum import Enum
 
 from langchain.vectorstores.utils import DistanceStrategy
 from pydantic import BaseModel
 
 
+class LogLevel(Enum):
+    """
+    Logging level.
+    """
+    DEBUG = "debug"
+    INFO = "info"
+
+
+def get_logging_level(level: LogLevel) -> int:
+    """
+    Returns the logging level constant.
+    """
+    if level == LogLevel.DEBUG:
+        return logging.DEBUG
+    elif level == LogLevel.INFO:
+        return logging.INFO
+    raise NotImplementedError
 class EmbeddingsGenerationMode(Enum):
     """
     Embeddings generation mode.
@@ -142,6 +160,7 @@ class Configuration(BaseModel):
         EmbeddingsGenerationMode.OPENAI
     indexer: IndexerConfiguration = IndexerConfiguration()
     llm: LargeLanguageModel = LargeLanguageModel.NONE
+    loglevel: LogLevel = LogLevel.INFO
 
     def get_embedding_size(self) -> int:
         """
