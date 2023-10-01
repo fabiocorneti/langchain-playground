@@ -13,6 +13,8 @@ from langchain.document_loaders import (
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from configuration import EmbeddingsGenerationMode
+from configuration import Splitter
+from splitter import SpacyLimitTextSplitter
 import settings
 from store import ElasticsearchDataStore
 
@@ -41,7 +43,13 @@ def index_documents(store: ElasticsearchDataStore) -> None:
         "chunk_size": settings.CONFIGURATION.indexer.chunkSize,
         "chunk_overlap": settings.CONFIGURATION.indexer.chunkOverlap
     }
-    if settings.CONFIGURATION.embeddingsGenerationMode == EmbeddingsGenerationMode.OPENAI:
+    embeddings_generation_mode = settings.CONFIGURATION.embeddingsGenerationMode
+    indexer_splitter = settings.CONFIGURATION.indexer.splitter
+
+    if indexer_splitter == Splitter.SPACY:
+        splitter = SpacyLimitTextSplitter(token_limit=settings.CONFIGURATION.indexer.maxTokens,
+                                          **chunk_kwargs)
+    elif embeddings_generation_mode == EmbeddingsGenerationMode.OPENAI:
         chunk_kwargs["encoding_name"] = "cl100k_base"
         splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(**chunk_kwargs)
     else:

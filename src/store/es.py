@@ -83,7 +83,7 @@ class ElasticsearchDataStore:
             retrieval_strategy = ElasticsearchStore.SparseVectorRetrievalStrategy()
         else:
             raise NotImplementedError
-        
+
         store_kwargs = {
             "index_name": settings.CONFIGURATION.elasticsearch.index,
             "vector_query_field": "vector",

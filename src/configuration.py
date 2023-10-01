@@ -22,7 +22,7 @@ def get_logging_level(level: LogLevel) -> int:
     """
     if level == LogLevel.DEBUG:
         return logging.DEBUG
-    elif level == LogLevel.INFO:
+    if level == LogLevel.INFO:
         return logging.INFO
     raise NotImplementedError
 
@@ -103,13 +103,22 @@ SENTENCETRANSFORMERS_EMBEDDINGS_SIZES = {
 }
 
 
+class Splitter(Enum):
+    """
+    The text splitter.
+    """
+    RECURSIVE = "recursive"
+    SPACY = "spacy"
+
+
 class IndexerConfiguration(BaseModel):
     """
     Indexer configuration.
     """
-    chunkSize: int = 400
-    chunkOverlap: int = 100
+    chunkSize: int = 800
+    chunkOverlap: int = 200
     maxTokens: int = 500
+    splitter: Splitter = Splitter
 
 
 class ElasticsearchConfiguration(BaseModel):
