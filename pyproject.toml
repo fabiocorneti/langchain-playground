@@ -28,6 +28,7 @@ pdfminer = "^20191125"
 pdfminer-six = "^20221105"
 instructorembedding = "^1.0.1"
 wikipedia = "^1.4.0"
+cffi = "^1.16.0"
 
 
 [tool.poetry.group.dev.dependencies]
