@@ -48,6 +48,7 @@ class ElasticsearchDataStore:
     __client: Elasticsearch
     __store: ElasticsearchStore
     __qa: RetrievalQA
+    __score_threshold: float
 
     def __init__(self) -> None:
         self.__client = Elasticsearch(
@@ -56,6 +57,8 @@ class ElasticsearchDataStore:
                         settings.CONFIGURATION.elasticsearch.password),
             request_timeout=settings.CONFIGURATION.elasticsearch.requestTimeout,
         )
+
+        self.__score_threshold = settings.CONFIGURATION.elasticsearch.scoreThreshold
 
         embeddings_mode = settings.CONFIGURATION.embeddingsGenerationMode
         normalize = settings.CONFIGURATION.elasticsearch.similarity == \
@@ -79,6 +82,7 @@ class ElasticsearchDataStore:
                 openai_api_key=settings.CONFIGURATION.openai.apikey
             )
         elif embeddings_mode == EmbeddingsGenerationMode.ELSER:
+            self.__score_threshold = None
             embeddings = None
             retrieval_strategy = ElasticsearchStore.SparseVectorRetrievalStrategy()
         else:
@@ -150,6 +154,8 @@ class ElasticsearchDataStore:
                                                             K,
                                                             fetch_k=FETCH_K,
                                                             filter=filters)
+        if self.__score_threshold is not None:
+            results = [result for result in results if result[1] >= self.__score_threshold]
         return results
 
     def ask(self, query: str) -> str:
@@ -166,7 +172,7 @@ class ElasticsearchDataStore:
             retriever=self.__store.as_retriever(search_kwargs={
                 "k": K,
                 "fetch_k": FETCH_K,
-                "filter": filters
+                "filter": filters,
             }),
             chain_type_kwargs={"prompt": PROMPT}
         )

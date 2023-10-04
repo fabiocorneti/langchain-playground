@@ -115,9 +115,9 @@ class IndexerConfiguration(BaseModel):
     """
     Indexer configuration.
     """
-    chunkSize: int = 800
+    chunkSize: int = 400
     chunkOverlap: int = 200
-    maxTokens: int = 500
+    maxTokens: int = 300
     splitter: Splitter = Splitter
 
 
@@ -131,6 +131,7 @@ class ElasticsearchConfiguration(BaseModel):
     index: str = "langchain"
     ignoreTlsVerification: bool = False
     similarity: DistanceStrategy = DistanceStrategy.COSINE
+    scoreThreshold: float = None
     requestTimeout: float = 60
     bulkSize: int = 50
 
